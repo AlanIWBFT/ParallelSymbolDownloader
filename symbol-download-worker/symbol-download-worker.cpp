@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <string>
 #include <filesystem>
+#include <algorithm>
+#include <cwctype>
 #include <Windows.h>
 #include <DbgHelp.h>
 
@@ -24,6 +26,7 @@ struct UserContext
 	int workerId;
 	int numTotalWorkers;
 	int iterationIndex;
+	bool dryRun;
 };
 
 BOOL CALLBACK EnumModules(
@@ -50,11 +53,16 @@ BOOL CALLBACK EnumModules(
 	absolutePath = absolutePath.substr(0, absolutePath.find_last_of(L".")) + L".pdb";
 	if (!std::filesystem::exists(absolutePath))
 	{
-		std::wcout << userContext.iterationIndex - 1 << L"> " << ModuleName << std::endl;
-		SYMBOL_INFOW SymbolInfo;
-		SymbolInfo.SizeOfStruct = sizeof(SYMBOL_INFOW);
-		SymbolInfo.MaxNameLen = 0;
-		SymFromIndexW(userContext.hProcess, BaseOfDll, 0, &SymbolInfo);
+		std::wstring ImageName(ModuleInfo.ImageName);
+		std::transform(ImageName.begin(), ImageName.end(), ImageName.begin(), [](wchar_t c) { return std::towlower(c); });
+		if (!userContext.dryRun)
+		{
+			SYMBOL_INFOW SymbolInfo;
+			SymbolInfo.SizeOfStruct = sizeof(SYMBOL_INFOW);
+			SymbolInfo.MaxNameLen = 0;
+			SymFromIndexW(userContext.hProcess, BaseOfDll, 0, &SymbolInfo);
+		}
+		std::wcout << L"> " << ImageName << std::endl;
 	}
 	SymUnloadModule(userContext.hProcess, BaseOfDll); // Immediately unload to keep memory low
 	return TRUE;
@@ -64,16 +72,17 @@ BOOL CALLBACK EnumModules(
 
 int wmain(int argc, const wchar_t* argv[])
 {
-	int pID, workerId, numTotalWorkers;
-	swscanf_s(argv[1], L"%d", &pID);
-	swscanf_s(argv[2], L"%d", &workerId);
-	swscanf_s(argv[3], L"%d", &numTotalWorkers);
-	std::wstring cacheAndServerPaths(argv[4]);
+	int dryRun, pID, workerId, numTotalWorkers;
+	swscanf_s(argv[1], L"%d", &dryRun);
+	swscanf_s(argv[2], L"%d", &pID);
+	swscanf_s(argv[3], L"%d", &workerId);
+	swscanf_s(argv[4], L"%d", &numTotalWorkers);
+	std::wstring cacheAndServerPaths(dryRun == 1 ? L"" : argv[5]);
 
 	check(SymSetOptions(SYMOPT_DEBUG | SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES));
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, pID);
 
-	UserContext userContext{ hProcess, workerId, numTotalWorkers, 0 };
+	UserContext userContext{ hProcess, workerId, numTotalWorkers, 0, dryRun == 1 };
 	check(SymInitializeW(hProcess, cacheAndServerPaths.c_str(), false));
 	// Uncomment to enable verbose debug log
 	// check(SymRegisterCallbackW64(hProcess, DebugInfoCallback, 0));
