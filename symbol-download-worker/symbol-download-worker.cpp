@@ -70,7 +70,7 @@ int wmain(int argc, const wchar_t* argv[])
 	swscanf_s(argv[3], L"%d", &numTotalWorkers);
 	std::wstring cacheAndServerPaths(argv[4]);
 
-	check(SymSetOptions(SYMOPT_DEBUG | SYMOPT_DEFERRED_LOADS));
+	check(SymSetOptions(SYMOPT_DEBUG | SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES));
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, pID);
 
 	UserContext userContext{ hProcess, workerId, numTotalWorkers, 0 };
