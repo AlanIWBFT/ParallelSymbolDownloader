@@ -55,7 +55,6 @@ BOOL CALLBACK EnumModules(
 	{
 		std::wstring ImageName(ModuleInfo.ImageName);
 		std::transform(ImageName.begin(), ImageName.end(), ImageName.begin(), [](wchar_t c) { return std::towlower(c); });
-		std::wcout << L"> " << ImageName << std::endl;
 		if (!userContext.dryRun)
 		{
 			SYMBOL_INFOW SymbolInfo;
@@ -63,6 +62,7 @@ BOOL CALLBACK EnumModules(
 			SymbolInfo.MaxNameLen = 0;
 			SymFromIndexW(userContext.hProcess, BaseOfDll, 0, &SymbolInfo);
 		}
+		std::wcout << L"> " << ImageName << std::endl;
 	}
 	SymUnloadModule(userContext.hProcess, BaseOfDll); // Immediately unload to keep memory low
 	return TRUE;
