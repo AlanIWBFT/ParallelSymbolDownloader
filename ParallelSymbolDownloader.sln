@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "symbol-download-worker", "symbol-download-worker.vcxproj", "{87F5AD9A-D77A-4842-B1BD-5A43068ACA22}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "symbol-download-worker", "symbol-download-worker\symbol-download-worker.vcxproj", "{87F5AD9A-D77A-4842-B1BD-5A43068ACA22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
