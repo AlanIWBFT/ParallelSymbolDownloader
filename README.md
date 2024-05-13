@@ -27,3 +27,7 @@ Start `cmd` shell and execute
 `for /l %x in (0, 1, 9) do start symbol-download-worker.exe 37388 %x 10 cache*F:\SymbolCache;srv*https://msdl.microsoft.com/download/symbols`
 
 will launch 10 workers (numbered 0-9) populating your symbol cache.
+
+How to Build
+------------
+Open `ParallelSymbolDownloader.sln`, right click on project `GUI` and select publish. Then click the publish button. Build products are in `x64\Release`.
