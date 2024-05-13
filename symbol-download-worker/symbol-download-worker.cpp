@@ -55,9 +55,9 @@ BOOL CALLBACK EnumModules(
 	{
 		std::wstring ImageName(ModuleInfo.ImageName);
 		std::transform(ImageName.begin(), ImageName.end(), ImageName.begin(), [](wchar_t c) { return std::towlower(c); });
+		std::wcout << L"> " << ImageName << std::endl;
 		if (!userContext.dryRun)
 		{
-			std::wcout << L"> " << ImageName << std::endl;
 			SYMBOL_INFOW SymbolInfo;
 			SymbolInfo.SizeOfStruct = sizeof(SYMBOL_INFOW);
 			SymbolInfo.MaxNameLen = 0;
