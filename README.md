@@ -6,7 +6,15 @@ When symbol servers are enabled in IDEs, the first launch can be painfully slow 
 
 Using the GUI
 -------------
-The GUI is based on .NET 8. You will be prompted to install the right version on the first launch if you don't have it installed.
+The GUI is based on .NET 8. You will be prompted to install the right version on the first launch if you don't have it installed. Then, point local symbol cache path to where the IDE cache symbols. For example, you want to set it to `F:\SymbolCache` if that's where it is in Visual Studio:
+
+![VSSymbolCache](https://github.com/AlanIWBFT/ParallelSymbolDownloader/blob/master/visualstudio.png?raw=true)
+
+Or JetBrains Rider:
+
+![RiderSymbolCache](https://github.com/AlanIWBFT/ParallelSymbolDownloader/blob/master/rider.png?raw=true)
+
+Then, **disable symbol servers in the IDE** and launch your application. Now, locate and click it in the process list or use the search box to start parallel symbol downloading. Once it is finished, re-launch your app with symbol servers enabled and you should enjoy locally cached symbols.
 
 Underlying Worker Command Line Usage
 ------------------------------------
