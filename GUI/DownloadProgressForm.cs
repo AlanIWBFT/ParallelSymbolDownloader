@@ -25,26 +25,28 @@ namespace GUI
             if (e.Data != null)
             {
                 string strMessage = e.Data;
-                if (strMessage.IndexOf("> ") != -1)
+
+                int reportingWorkerIndex = -1;
+                for (int workerIndex = 0; workerIndex < NumWorkers; workerIndex++)
                 {
-                    string modulePath = strMessage.Substring(2);
+                    if (WorkerProcesses[workerIndex] == sender)
+                    {
+                        reportingWorkerIndex = workerIndex;
+                        break;
+                    }
+                }
+
+                if (strMessage[0] == 'D')
+                {
+                    string modulePath = strMessage.Substring(1);
+
                     if (ModuleNamesToDownload.Contains(modulePath))
                     {
                         NumPDBsDownloaded++;
 
-                        int reportingWorkerIndex = -1;
-                        for (int workerIndex = 0; workerIndex < NumWorkers; workerIndex++)
-                        {
-                            if (WorkerProcesses[workerIndex] == sender)
-                            {
-                                reportingWorkerIndex = workerIndex;
-                                break;
-                            }
-                        }
-
                         Invoke(delegate
                         {
-                            textBox1.AppendText("worker #" + reportingWorkerIndex + strMessage + "\r\n");
+                            textBox1.AppendText("worker #" + reportingWorkerIndex + "> " + modulePath + " ... 100%" + "\r\n");
                             progressBar1.Value = NumPDBsDownloaded;
                             Text = string.Format("Downloading symbols... {0:N1}%", NumPDBsDownloaded * 100.0f / ModuleNamesToDownload.Count);
                             if (ModuleNamesToDownload.Count == NumPDBsDownloaded)
@@ -62,7 +64,13 @@ namespace GUI
                             textBox1.AppendText("    Module not in download list \r\n");
                         });
                     }
-
+                }
+                else if(strMessage[0] == 'P')
+                {
+                    Invoke(delegate
+                    {
+                        textBox1.AppendText("worker #" + reportingWorkerIndex + "> " + strMessage.Substring(1) + "\r\n");
+                    });
                 }
             }
         }
@@ -100,7 +108,7 @@ namespace GUI
             string output;
             while ((output = p.StandardOutput.ReadLine()) != null)
             {
-                string modulePath = output.Substring(2);
+                string modulePath = output.Substring(1);
                 string potentialPdbPath = Path.ChangeExtension(modulePath, ".pdb");
                 if (!System.IO.File.Exists(potentialPdbPath))
                 {
