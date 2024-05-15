@@ -1,20 +1,16 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace GUI
 {
     public partial class MainForm : Form
     {
+        const uint PROCESS_QUERY_INFORMATION = 0x0400;
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, uint processId);
         private bool TestIfProcessIsAccessible(Process process)
         {
-            bool bProcessAccessible = false;
-            try
-            {
-                // Access field to trigger potential access denied exception
-                process.SafeHandle.ToString();
-                bProcessAccessible = true;
-            }
-            catch (Exception) { }
-            return bProcessAccessible;
+            return OpenProcess(PROCESS_QUERY_INFORMATION, false, (uint)process.Id) != 0;
         }
         private List<Process> RefreshProcessList()
         {

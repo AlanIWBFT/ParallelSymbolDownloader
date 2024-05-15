@@ -105,7 +105,7 @@ int wmain(int argc, const wchar_t* argv[])
 	std::wstring cacheAndServerPaths(dryRun == 1 ? L"" : argv[5]);
 
 	check(SymSetOptions(SYMOPT_DEBUG | SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES));
-    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, pID);
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, pID);
 
 	UserContext userContext{ hProcess, workerId, numTotalWorkers, 0, dryRun == 1, L""};
 	check(SymInitializeW(hProcess, cacheAndServerPaths.c_str(), false));
