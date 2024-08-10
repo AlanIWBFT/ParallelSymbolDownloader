@@ -97,7 +97,7 @@ namespace GUI
         private void processListView_MouseUp(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo listViewHitTestInfo = processListView.HitTest(e.X, e.Y);
-            ListViewItem? item = listViewHitTestInfo.Item;
+            ListViewItem item = listViewHitTestInfo.Item;
             if (item != null)
             {
                 string pid = item.Text;
